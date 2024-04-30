@@ -1,4 +1,3 @@
-import random
 import traceback
 from pathlib import Path
 
@@ -15,6 +14,7 @@ from exllamav2.generator import ExLlamaV2BaseGenerator, ExLlamaV2Sampler
 from modules import shared
 from modules.logging_colors import logger
 from modules.text_generation import get_max_prompt_length
+import secrets
 
 try:
     import flash_attn
@@ -123,7 +123,7 @@ class Exllamav2Model:
         has_leading_space = False
         for i in range(max_new_tokens):
             logits = self.model.forward(ids[:, -1:], self.cache, input_mask=None, loras=self.loras).float().cpu()
-            token, _, _ = ExLlamaV2Sampler.sample(logits, settings, ids, random.random(), self.tokenizer)
+            token, _, _ = ExLlamaV2Sampler.sample(logits, settings, ids, secrets.SystemRandom().random(), self.tokenizer)
             ids = torch.cat([ids, token], dim=1)
 
             if i == 0 and self.tokenizer.tokenizer.IdToPiece(int(token)).startswith('▁'):

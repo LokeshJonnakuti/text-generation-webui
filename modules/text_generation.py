@@ -1,7 +1,6 @@
 import ast
 import copy
 import html
-import random
 import re
 import time
 import traceback
@@ -22,6 +21,7 @@ from modules.grammar import GrammarLogitsProcessor
 from modules.html_generator import generate_4chan_html, generate_basic_html
 from modules.logging_colors import logger
 from modules.models import clear_torch_cache, local_rank
+import secrets
 
 
 def generate_reply(*args, **kwargs):
@@ -236,7 +236,7 @@ def get_reply_from_output_ids(output_ids, input_ids, original_question, state, i
 def set_manual_seed(seed):
     seed = int(seed)
     if seed == -1:
-        seed = random.randint(1, 2**31)
+        seed = secrets.SystemRandom().randint(1, 2**31)
 
     torch.manual_seed(seed)
     if torch.cuda.is_available():
