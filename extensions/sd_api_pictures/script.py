@@ -48,23 +48,23 @@ def give_VRAM_priority(actor):
     if actor == 'SD':
         unload_model()
         print("Requesting Auto1111 to re-load last checkpoint used...")
-        response = requests.post(url=f'{params["address"]}/sdapi/v1/reload-checkpoint', json='')
+        response = requests.post(url=f'{params["address"]}/sdapi/v1/reload-checkpoint', json='', timeout=60)
         response.raise_for_status()
 
     elif actor == 'LLM':
         print("Requesting Auto1111 to vacate VRAM...")
-        response = requests.post(url=f'{params["address"]}/sdapi/v1/unload-checkpoint', json='')
+        response = requests.post(url=f'{params["address"]}/sdapi/v1/unload-checkpoint', json='', timeout=60)
         response.raise_for_status()
         reload_model()
 
     elif actor == 'set':
         print("VRAM mangement activated -- requesting Auto1111 to vacate VRAM...")
-        response = requests.post(url=f'{params["address"]}/sdapi/v1/unload-checkpoint', json='')
+        response = requests.post(url=f'{params["address"]}/sdapi/v1/unload-checkpoint', json='', timeout=60)
         response.raise_for_status()
 
     elif actor == 'reset':
         print("VRAM mangement deactivated -- requesting Auto1111 to reload checkpoint")
-        response = requests.post(url=f'{params["address"]}/sdapi/v1/reload-checkpoint', json='')
+        response = requests.post(url=f'{params["address"]}/sdapi/v1/reload-checkpoint', json='', timeout=60)
         response.raise_for_status()
 
     else:
@@ -154,7 +154,7 @@ def get_SD_pictures(description, character):
     }
 
     print(f'Prompting the image generator via the API on {params["address"]}...')
-    response = requests.post(url=f'{params["address"]}/sdapi/v1/txt2img', json=payload)
+    response = requests.post(url=f'{params["address"]}/sdapi/v1/txt2img', json=payload, timeout=60)
     response.raise_for_status()
     r = response.json()
 
@@ -258,7 +258,7 @@ def SD_api_address_update(address):
     address = filter_address(address)
     params.update({"address": address})
     try:
-        response = requests.get(url=f'{params["address"]}/sdapi/v1/sd-models')
+        response = requests.get(url=f'{params["address"]}/sdapi/v1/sd-models', timeout=60)
         response.raise_for_status()
         # r = response.json()
     except:
@@ -276,8 +276,8 @@ def get_checkpoints():
     global params
 
     try:
-        models = requests.get(url=f'{params["address"]}/sdapi/v1/sd-models')
-        options = requests.get(url=f'{params["address"]}/sdapi/v1/options')
+        models = requests.get(url=f'{params["address"]}/sdapi/v1/sd-models', timeout=60)
+        options = requests.get(url=f'{params["address"]}/sdapi/v1/options', timeout=60)
         options_json = options.json()
         params['sd_checkpoint'] = options_json['sd_model_checkpoint']
         params['checkpoint_list'] = [result["title"] for result in models.json()]
@@ -294,14 +294,14 @@ def load_checkpoint(checkpoint):
     }
 
     try:
-        requests.post(url=f'{params["address"]}/sdapi/v1/options', json=payload)
+        requests.post(url=f'{params["address"]}/sdapi/v1/options', json=payload, timeout=60)
     except:
         pass
 
 
 def get_samplers():
     try:
-        response = requests.get(url=f'{params["address"]}/sdapi/v1/samplers')
+        response = requests.get(url=f'{params["address"]}/sdapi/v1/samplers', timeout=60)
         response.raise_for_status()
         samplers = [x["name"] for x in response.json()]
     except:
