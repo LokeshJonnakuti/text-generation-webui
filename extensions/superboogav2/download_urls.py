@@ -1,5 +1,4 @@
 import concurrent.futures
-import requests
 import re
 
 from bs4 import BeautifulSoup
@@ -8,9 +7,10 @@ import extensions.superboogav2.parameters as parameters
 
 from .data_processor import process_and_add_to_collector
 from .utils import create_metadata_source
+from security import safe_requests
 
 def _download_single(url):
-    response = requests.get(url, timeout=5)
+    response = safe_requests.get(url, timeout=5)
     if response.status_code == 200:
         return response.content
     else:
