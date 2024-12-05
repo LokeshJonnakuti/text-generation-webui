@@ -7,6 +7,7 @@ import re
 import site
 import subprocess
 import sys
+from security import safe_command
 
 script_dir = os.getcwd()
 conda_env_path = os.path.join(script_dir, "installer_files", "env")
@@ -146,7 +147,7 @@ def run_cmd(cmd, assert_success=False, environment=False, capture_output=False, 
             cmd = ". \"" + conda_sh_path + "\" && conda activate \"" + conda_env_path + "\" && " + cmd
 
     # Run shell commands
-    result = subprocess.run(cmd, shell=True, capture_output=capture_output, env=env)
+    result = safe_command.run(subprocess.run, cmd, shell=True, capture_output=capture_output, env=env)
 
     # Assert the command ran successfully
     if assert_success and result.returncode != 0:
